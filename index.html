@@ -2303,12 +2303,23 @@ async function startRecording(){
   await preloadAll();
   const totalDur=calcTotalDur();
   S.recTotalDur=totalDur;
+  // ── تحسين تلقائي على الموبايل ──
+  const _isMobileDev=/iPad|iPhone|iPod|Android/.test(navigator.userAgent);
+  if(_isMobileDev && S.exportResH > 854){
+    S.exportResH = 854; // خفّض لـ 480p على الموبايل تلقائياً
+    _resizeExportCanvas();
+    log('📱 تم تخفيض الدقة لـ 480p تلقائياً على الموبايل لمنع التهنيج','info');
+  }
+  if(_isMobileDev && (S.exportFps||30) > 30){
+    S.exportFps = 30;
+    log('📱 تم تخفيض FPS لـ 30 على الموبايل','info');
+  }
+  S._lastExpFrame = 0; // reset throttle counter
   const fps = S.exportFps || parseInt(document.getElementById('s-fps').value);
   const bitrate = _getAutoBitrate(S.exportResH, fps);
   // تأكد الـ export canvas بالحجم الصح
   _resizeExportCanvas();
   // ── اختيار الـ MIME الصح حسب المتصفح والجهاز ──
-  const _isMobileDev=/iPad|iPhone|iPod|Android/.test(navigator.userAgent);
   // MP4 دايماً — مثبّت على كل الأجهزة
   const _mimeCandidates = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/mp4;codecs=h264,aac','video/mp4','video/webm;codecs=vp8,opus','video/webm;codecs=vp9,opus','video/webm;codecs=vp8','video/webm'];
   const mimeType=_mimeCandidates.find(t=>{try{return MediaRecorder.isTypeSupported(t);}catch(ex){return false;}})||'video/webm';
@@ -2697,6 +2708,11 @@ async function startRecordingTurbo(){
   await preloadAll();
   const totalDur=calcTotalDur();
   S.recTotalDur=totalDur;
+  // تحسين تلقائي للموبايل
+  const _isMob=/iPad|iPhone|iPod|Android/.test(navigator.userAgent);
+  if(_isMob && S.exportResH > 854){ S.exportResH=854; _resizeExportCanvas(); }
+  if(_isMob && (S.exportFps||30) > 30) S.exportFps=30;
+  S._lastExpFrame = 0;
   const fps     = S.exportFps || 30;
   const bitrate = _getAutoBitrate(S.exportResH, fps);
   _resizeExportCanvas();
@@ -3292,7 +3308,10 @@ function drawGeo(){
 
 function drawParticles(){
   if(!S.showParts)return;
-  S.particles.forEach(p=>{
+  // أثناء التسجيل: ارسم نص الجسيمات بس (كل 2 جسيم) عشان تخفيف على الموبايل
+  const step = S.isRecording ? 2 : 1;
+  S.particles.forEach((p,i)=>{
+    if(S.isRecording && i % step !== 0) return;
     p.x+=p.vx;p.y+=p.vy;
     if(p.y<-8){p.y=H+8;p.x=Math.random()*W;}
     if(p.x<0)p.x=W;if(p.x>W)p.x=0;
@@ -3697,15 +3716,19 @@ function renderFrame(){
   if(wpC && wpC.width > 0){
     wpC.getContext('2d').drawImage(canvas, 0, 0, wpC.width, wpC.height);
   }
-  // ══ Export Canvas + Frame Capture (Nuclear) ══
+  // ══ Export Canvas + Frame Capture ══
+  // نرسم للـ export canvas بـ FPS المطلوب فقط — مش كل frame عشان الموبايل ميتهنيش
   if(S.isRecording && _expCanvas.width > 0){
-    _expCtx.drawImage(canvas, 0, 0, _expCanvas.width, _expCanvas.height);
-    if(S.frameCapture){
-      const interval = 1000 / (S.exportFps || 30);
-      const now = performance.now();
-      if(now - S.frameCapture.lastCapture >= interval){
-        S.frameCapture.lastCapture = now;
-        S.frameCapture.frames.push(_expCanvas.toDataURL('image/png'));
+    const _expFps = S.exportFps || 30;
+    const _expInterval = 1000 / _expFps;
+    const _now = performance.now();
+    if(!S._lastExpFrame) S._lastExpFrame = 0;
+    if(_now - S._lastExpFrame >= _expInterval){
+      S._lastExpFrame = _now;
+      _expCtx.drawImage(canvas, 0, 0, _expCanvas.width, _expCanvas.height);
+      if(S.frameCapture){
+        S.frameCapture.lastCapture = _now;
+        S.frameCapture.frames.push(_expCanvas.toDataURL('image/jpeg', 0.92));
       }
     }
   }
