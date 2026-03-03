@@ -742,6 +742,131 @@ body.light-mode .dark-toggle-btn {
 .proj-empty { text-align: center; padding: 2rem 1rem; color: rgba(255,255,255,.25); font-size: .78rem; }
 .proj-save-bar { background: rgba(240,192,64,.07); border: 1px solid rgba(240,192,64,.2); border-radius: 12px; padding: .75rem; margin-bottom: .85rem; }
 
+
+/* ══════════════════════════════════
+   UI IMPROVEMENTS — onboarding & readability
+══════════════════════════════════ */
+.steps-banner {
+  background: #1a3d2b;
+  border: 2px solid #D4A843;
+  border-radius: 16px;
+  padding: 1rem 1.1rem 1rem;
+  margin-bottom: 1rem;
+  direction: rtl;
+  position: relative;
+  box-shadow: 0 4px 24px rgba(0,0,0,.35);
+}
+.steps-banner-title {
+  font-size: .88rem; font-weight: 900; color: #f0c84a;
+  margin-bottom: .7rem; display: flex; align-items: center; gap: .4rem;
+}
+.steps-list {
+  display: grid; grid-template-columns: 1fr; gap: .48rem;
+}
+@media(min-width:600px){ .steps-list { grid-template-columns: 1fr 1fr; } }
+.step-item {
+  display: flex; align-items: flex-start; gap: .55rem;
+  background: rgba(255,255,255,.07); border-radius: 10px;
+  padding: .5rem .65rem;
+  border: 1px solid rgba(212,168,67,.25);
+  cursor: pointer; transition: all .2s;
+}
+.step-item:hover { border-color: #D4A843; background: rgba(212,168,67,.14); }
+.step-num {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg,#D4A843,#f0c84a);
+  color: #1B4332; font-size: .7rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: .05rem; box-shadow: 0 2px 6px rgba(212,168,67,.4);
+}
+.step-text { flex: 1; }
+.step-label { font-size: .78rem; font-weight: 900; color: #ffffff; margin-bottom: .08rem; line-height: 1.4; }
+.step-desc { font-size: .65rem; color: rgba(255,255,255,.65); line-height: 1.5; }
+.steps-close-btn {
+  position: absolute; top: .65rem; left: .65rem;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  border-radius: 6px; color: rgba(255,255,255,.7); font-size: .68rem;
+  padding: .2rem .55rem; cursor: pointer; font-family: 'Cairo', sans-serif;
+  transition: all .2s;
+}
+.steps-close-btn:hover { background: rgba(244,63,94,.25); color: #fff; border-color: rgba(244,63,94,.5); }
+.hint-box {
+  background: #16362a;
+  border: 1px solid rgba(212,168,67,.35);
+  border-right: 4px solid #D4A843;
+  border-radius: 9px; padding: .52rem .75rem;
+  margin-bottom: .8rem; direction: rtl;
+  font-size: .74rem; color: #d4e8da;
+  line-height: 1.85;
+}
+.hint-box b { color: #f0c84a; font-weight: 800; }
+.hint-icon { margin-left: .3rem; }
+.tab-step {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  background: rgba(212,168,67,.28); color: #D4A843;
+  font-size: .52rem; font-weight: 900; margin-left: .22rem; flex-shrink: 0;
+  vertical-align: middle;
+}
+.tab.active .tab-step { background: #D4A843; color: #1B4332; }
+.cl { font-size: .8rem !important; color: rgba(255,255,255,.85) !important; font-weight: 700 !important; margin-bottom: .32rem !important; }
+.tlbl { font-size: .8rem !important; color: rgba(255,255,255,.82) !important; }
+.rlbl { font-size: .7rem !important; color: rgba(255,255,255,.72) !important; letter-spacing: .5px !important; }
+.note { font-size: .72rem !important; color: rgba(255,255,255,.62) !important; }
+select, input[type=number] { font-size: .85rem !important; }
+
+/* ═══ FORCE SOLID COLORS — ثابتة لجميع المستخدمين ═══ */
+.steps-banner,
+body.light-mode .steps-banner,
+body .steps-banner {
+  background: #1a3d2b !important;
+  border: 2px solid #D4A843 !important;
+  color: #ffffff !important;
+}
+.steps-banner-title,
+body.light-mode .steps-banner-title {
+  color: #f0c84a !important;
+}
+.step-item,
+body.light-mode .step-item {
+  background: rgba(0,0,0,.28) !important;
+  border: 1px solid rgba(212,168,67,.3) !important;
+}
+.step-item:hover,
+body.light-mode .step-item:hover {
+  background: rgba(212,168,67,.18) !important;
+  border-color: #D4A843 !important;
+}
+.step-label,
+body.light-mode .step-label {
+  color: #ffffff !important;
+}
+.step-desc,
+body.light-mode .step-desc {
+  color: #a8d5b5 !important;
+}
+.steps-close-btn,
+body.light-mode .steps-close-btn {
+  background: rgba(0,0,0,.3) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  color: #ffffffcc !important;
+}
+.hint-box,
+body.light-mode .hint-box {
+  background: #16362a !important;
+  border: 1px solid rgba(212,168,67,.35) !important;
+  border-right: 4px solid #D4A843 !important;
+  color: #d4e8da !important;
+}
+.hint-box b,
+body.light-mode .hint-box b,
+.hint-box strong,
+body.light-mode .hint-box strong {
+  color: #f0c84a !important;
+}
+body.light-mode .cl { color: #e8f5ec !important; }
+body.light-mode .tlbl { color: #e0f0e8 !important; }
+body.light-mode .rlbl { color: rgba(220,245,230,.85) !important; }
 </style>
 </head>
 <body>
@@ -756,26 +881,89 @@ body.light-mode .dark-toggle-btn {
   </div>
 </div>
 
+
+<div style="text-align:center;margin:.35rem 0 .15rem;direction:rtl;">
+  <button onclick="showBanner()" 
+    style="background:rgba(212,168,67,.11);border:1px solid rgba(212,168,67,.28);border-radius:20px;
+    color:#D4A843;font-size:.7rem;font-weight:800;padding:.3rem .9rem;cursor:pointer;
+    font-family:'Cairo',sans-serif;transition:all .2s;letter-spacing:.5px;"
+    onmouseover="this.style.background='rgba(212,168,67,.2)'" 
+    onmouseout="this.style.background='rgba(212,168,67,.11)'">
+    ❓ دليل البدء السريع
+  </button>
+</div>
+
 <!-- زر الوضع الليلي/النهاري -->
 
 
 <div class="main">
 
+<!-- ONBOARDING STEPS BANNER -->
+<div class="steps-banner" id="steps-banner" style="display:none;">
+  <button class="steps-close-btn" onclick="dismissBanner()">✕ إخفاء</button>
+  <div class="steps-banner-title">🚀 دليل البدء السريع — اتبع هذه الخطوات بالترتيب</div>
+  <div class="steps-list">
+    <div class="step-item" onclick="sTab('range')">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <div class="step-label">🎯 اختر الآيات والقارئ</div>
+        <div class="step-desc">حدد السورة، النطاق (من/إلى)، والقارئ</div>
+      </div>
+    </div>
+    <div class="step-item" onclick="sTab('design')">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <div class="step-label">🎨 صمّم الخلفية والألوان</div>
+        <div class="step-desc">اختر خلفية جاهزة أو ارفع صورة/فيديو</div>
+      </div>
+    </div>
+    <div class="step-item" onclick="sTab('text')">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <div class="step-label">✍️ اضبط الخط والنص</div>
+        <div class="step-desc">الخط وحجمه وميزة كلمة بكلمة</div>
+      </div>
+    </div>
+    <div class="step-item" onclick="sTab('export')">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <div class="step-label">📥 سجّل وحمّل الفيديو</div>
+        <div class="step-desc">ابدأ التسجيل ثم حمّل الفيديو النهائي</div>
+      </div>
+    </div>
+    <div class="step-item" onclick="sTab('sync')">
+      <div class="step-num">5</div>
+      <div class="step-text">
+        <div class="step-label">⏱️ اضبط التوقيت (اختياري)</div>
+        <div class="step-desc">عدّل الأوفست لو النص غير متزامن مع الصوت</div>
+      </div>
+    </div>
+    <div class="step-item" onclick="sTab('projects');renderProjectsList()">
+      <div class="step-num">6</div>
+      <div class="step-text">
+        <div class="step-label">📁 احفظ مشروعك</div>
+        <div class="step-desc">احفظ الإعدادات للرجوع إليها لاحقاً</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ════ LEFT ════ -->
 <div class="panel">
   <div class="tabs">
-    <div class="tab active" onclick="sTab('range')">🎯 الآيات</div>
-    <div class="tab" onclick="sTab('sync')">⏱️ التوقيت</div>
-    <div class="tab" onclick="sTab('design')">🎨 التصميم</div>
-    <div class="tab" onclick="sTab('text')">✍️ النص</div>
+    <div class="tab active" onclick="sTab('range')"><span class="tab-step">1</span>🎯 الآيات</div>
+    <div class="tab" onclick="sTab('sync')"><span class="tab-step">5</span>⏱️ التوقيت</div>
+    <div class="tab" onclick="sTab('design')"><span class="tab-step">2</span>🎨 التصميم</div>
+    <div class="tab" onclick="sTab('text')"><span class="tab-step">3</span>✍️ النص</div>
     <div class="tab" onclick="sTab('manualsync')">🖐️ مزامنة يدوية</div>
-    <div class="tab" onclick="sTab('export')">📥 تنزيل</div>
+    <div class="tab" onclick="sTab('export')"><span class="tab-step">4</span>📥 تنزيل</div>
     <div class="tab" onclick="sTab('projects');renderProjectsList()">📁 مشاريعي</div>
     <div class="tab" onclick="sTab('help')">📖 دليل الاستخدام</div>
   </div>
 
   <!-- RANGE TAB -->
   <div class="tc active" id="tc-range">
+    <div class="hint-box"><span class="hint-icon">💡</span><b>الخطوة 1:</b> اختر السورة، ثم القارئ، ثم نطاق الآيات (من ← إلى). بعدها اضغط ▶ في المعاينة لتشغيل التلاوة.</div>
     <div class="cg">
       <label class="cl">السورة</label>
       <select id="s-surah" onchange="onSurahChange()"></select>
@@ -813,6 +1001,7 @@ body.light-mode .dark-toggle-btn {
 
   <!-- SYNC TAB -->
   <div class="tc" id="tc-sync">
+    <div class="hint-box"><span class="hint-icon">⏱️</span><b>ملاحظة:</b> إذا ظهر النص مبكراً أمام الصوت، زد الأوفست. إذا تأخر عنه، قلّله. قيمة 0 هي الافتراضية.</div>
     <div class="st">ضبط المزامنة</div>
     <div class="note" style="margin-bottom:.8rem;padding:.6rem;background:var(--card);border-radius:8px;border:1px solid rgba(255,255,255,.06);">
       <b style="color:var(--em)">موجب (+)</b> = النص يظهر <b style="color:var(--em)">قبل</b> الصوت (النص ينتظر الصوت)<br>
@@ -835,6 +1024,7 @@ body.light-mode .dark-toggle-btn {
 
   <!-- DESIGN TAB -->
   <div class="tc" id="tc-design">
+    <div class="hint-box"><span class="hint-icon">🎨</span><b>الخطوة 2:</b> اختر خلفية جاهزة أو ارفع صورتك. ثم اختر لون النص المناسب من الألوان الموجودة.</div>
     <div class="st">الخلفية</div>
     <div class="bg-grid" id="bg-grid">
       <button class="bgb active" onclick="setBg('g1')" data-b="g1">🌙 ليلي</button>
@@ -950,6 +1140,7 @@ body.light-mode .dark-toggle-btn {
 
   <!-- TEXT TAB -->
   <div class="tc" id="tc-text">
+    <div class="hint-box"><span class="hint-icon">✍️</span><b>الخطوة 3:</b> اختر الخط (نوصي بـ «خط المصحف»). فعّل <b>كلمة بكلمة تلقائي</b> لإضاءة كل كلمة مع الصوت أوتوماتيكياً.</div>
     <div class="st">الخط القرآني</div>
     <div class="cg">
       <label class="cl">نوع الخط</label>
@@ -1125,6 +1316,7 @@ body.light-mode .dark-toggle-btn {
 
   <!-- EXPORT TAB -->
   <div class="tc" id="tc-export">
+    <div class="hint-box"><span class="hint-icon">📥</span><b>الخطوة 4:</b> اختر الجودة والدقة، ثم اضغط <b>بدء التسجيل التوربو</b>. انتظر حتى ينتهي الفيديو تلقائياً ويُحفظ.</div>
     <div class="dur-box" style="margin-bottom:.8rem;">
       <div><div class="dur-l">مدة الفيديو (تلقائية)</div><div class="dur-note">الفيديو ينتهي مع نهاية آخر آية</div></div>
       <div class="dur-r" id="exp-dur">— : —</div>
@@ -4341,6 +4533,27 @@ function importProjects(e){
   };
   reader.readAsText(file);
   e.target.value = '';
+}
+
+
+// ── Onboarding banner ──
+(function(){
+  try {
+    if(!localStorage.getItem('quran-reels-banner-v2')){
+      var b = document.getElementById('steps-banner');
+      if(b) b.style.display = 'block';
+    }
+  } catch(e){}
+})();
+function dismissBanner(){
+  var b = document.getElementById('steps-banner');
+  if(b) b.style.display = 'none';
+  try { localStorage.setItem('quran-reels-banner-v2','1'); } catch(e){}
+}
+function showBanner(){
+  var b = document.getElementById('steps-banner');
+  if(b){ b.style.display='block'; b.scrollIntoView({behavior:'smooth',block:'start'}); }
+  try { localStorage.removeItem('quran-reels-banner-v2'); } catch(e){}
 }
 
 /* ═══════ INIT ═══════ */
