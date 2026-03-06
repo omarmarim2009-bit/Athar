@@ -2603,6 +2603,17 @@ async function finishRec(){
       log('⚠️ فشل إصلاح المدة: '+fixErr.message,'info');
     }
   }
+  // ══ إصلاح مدة MP4 — بيحل مشكلة 00:00 في ملفات MP4 ══
+  if(mime.includes('mp4')){
+    log('🔧 جاري إصلاح مدة MP4...','info');
+    const _mp4Dur = Date.now() - (S._recActualStart || S.recStartTime || Date.now());
+    try{
+      rawBlob = await fixMp4Duration(rawBlob, _mp4Dur);
+      log('✅ تم إصلاح مدة MP4: '+Math.round(_mp4Dur/1000)+'ث','ok');
+    }catch(fixErr){
+      log('⚠️ فشل إصلاح مدة MP4: '+fixErr.message,'info');
+    }
+  }
   S.lastBlob=rawBlob;
   const mb=(S.lastBlob.size/1024/1024).toFixed(1);
   log(`✅ الفيديو جاهز — ${mb} MB`,'ok');
@@ -2626,6 +2637,78 @@ async function finishRec(){
       </a>`;
   }
   showVideoPopup(S.lastBlob,mime);
+}
+
+/* ══ إصلاح مدة MP4 — يحل مشكلة 00:00 بتعديل atoms مباشرةً ══
+   بيصلح ثلاث atoms:
+   • mvhd  — movie header  (المدة الكلية للفيلم)
+   • tkhd  — track header  (مدة كل track بوحدة movie timescale)
+   • mdhd  — media header  (مدة كل track بوحدة media timescale الخاصة بيه)
+*/
+async function fixMp4Duration(blob, durationMs){
+  try{
+    const buf = await blob.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    const view  = new DataView(buf);
+    const sec   = durationMs / 1000;
+
+    // ابحث عن أول حدوث لاسم box معين ابتداءً من موضع معيّن
+    function findBox(name, from){
+      const c0=name.charCodeAt(0),c1=name.charCodeAt(1),
+            c2=name.charCodeAt(2),c3=name.charCodeAt(3);
+      for(let i=from||0; i<bytes.length-4; i++){
+        if(bytes[i]===c0&&bytes[i+1]===c1&&bytes[i+2]===c2&&bytes[i+3]===c3) return i;
+      }
+      return -1;
+    }
+
+    // ── mvhd: احصل على movie timescale وصلّح المدة ──
+    let movieTs = 1000; // fallback
+    const mvhd = findBox('mvhd', 0);
+    if(mvhd >= 0){
+      const v = view.getUint8(mvhd+4);
+      if(v===0){
+        movieTs = view.getUint32(mvhd+16) || 1000;
+        view.setUint32(mvhd+20, Math.round(sec*movieTs));
+      } else {
+        movieTs = view.getUint32(mvhd+24) || 1000;
+        view.setUint32(mvhd+28, 0);
+        view.setUint32(mvhd+32, Math.round(sec*movieTs));
+      }
+    }
+
+    // ── tkhd: صلّح مدة كل track (بوحدة movie timescale) ──
+    let pos=0;
+    while(true){
+      const p=findBox('tkhd',pos); if(p<0) break;
+      const v=view.getUint8(p+4);
+      if(v===0) view.setUint32(p+24, Math.round(sec*movieTs));
+      else{ view.setUint32(p+32,0); view.setUint32(p+36, Math.round(sec*movieTs)); }
+      pos=p+1;
+    }
+
+    // ── mdhd: صلّح مدة كل media (بوحدة media timescale الخاصة بكل track) ──
+    pos=0;
+    while(true){
+      const p=findBox('mdhd',pos); if(p<0) break;
+      const v=view.getUint8(p+4);
+      let ts;
+      if(v===0){
+        ts=view.getUint32(p+16)||1000;
+        view.setUint32(p+20, Math.round(sec*ts));
+      } else {
+        ts=view.getUint32(p+24)||1000;
+        view.setUint32(p+28,0);
+        view.setUint32(p+32, Math.round(sec*ts));
+      }
+      pos=p+1;
+    }
+
+    return new Blob([buf], {type: blob.type});
+  } catch(e){
+    console.warn('fixMp4Duration failed:', e);
+    return blob; // ارجع الـ blob الأصلي لو فشل الإصلاح
+  }
 }
 
 /* ══ VIDEO POPUP & SHARE — نهائي بدون permission denied ══ */
